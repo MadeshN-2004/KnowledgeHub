@@ -149,165 +149,328 @@ const AddEditDocument = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to Dashboard
-        </button>
-        
-        <h1 className="text-3xl font-bold text-gray-900">
-          {isEditing ? 'Edit Document' : 'Create New Document'}
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-pulse animation-delay-4000"></div>
       </div>
-
-      <div className="bg-white rounded-lg shadow-sm border">
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Title */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              required
-              value={formData.title}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter document title"
-            />
+      
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8 animate-fade-in-up">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="group inline-flex items-center text-sm text-gray-600 hover:text-indigo-600 mb-6 transition-all duration-200 hover:translate-x-1"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
+            Back to Dashboard
+          </button>
+          
+          <div className="relative">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+              {isEditing ? 'Edit Document' : 'Create New Document'}
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-shimmer"></div>
           </div>
+        </div>
 
-          {/* Content */}
-          <div>
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700">
-              Content
-            </label>
-            <textarea
-              name="content"
-              id="content"
-              required
-              rows={12}
-              value={formData.content}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Enter document content"
-            />
-          </div>
-
-          {/* AI Summary */}
-          <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="summary" className="block text-sm font-medium text-gray-700">
-                Summary
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden animate-fade-in-up animation-delay-200">
+          {/* Header Gradient */}
+          <div className="h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+          
+          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+            {/* Title */}
+            <div className="group animate-fade-in-up animation-delay-300">
+              <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors duration-200">
+                Document Title
               </label>
-              <button
-                type="button"
-                onClick={generateSummary}
-                disabled={aiLoading}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
-              >
-                <Bot className="h-3 w-3 mr-1" />
-                {aiLoading ? 'Generating...' : 'Generate with AI'}
-              </button>
-            </div>
-            <textarea
-              name="summary"
-              id="summary"
-              rows={3}
-              value={formData.summary}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="Document summary (optional)"
-            />
-          </div>
-
-          {/* Tags */}
-          <div>
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">
-                Tags
-              </label>
-              <button
-                type="button"
-                onClick={generateTags}
-                disabled={aiLoading}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
-              >
-                <Sparkles className="h-3 w-3 mr-1" />
-                {aiLoading ? 'Generating...' : 'Generate Tags'}
-              </button>
-            </div>
-            
-            <div className="mt-1">
-              <div className="flex space-x-2 mb-2">
+              <div className="relative">
                 <input
                   type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Add a tag"
+                  name="title"
+                  id="title"
+                  required
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all duration-200 hover:border-gray-300 bg-gray-50/50 backdrop-blur-sm"
+                  placeholder="Enter a compelling document title..."
                 />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-focus-within:opacity-10 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="group animate-fade-in-up animation-delay-400">
+              <label htmlFor="content" className="block text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors duration-200">
+                Content
+              </label>
+              <div className="relative">
+                <textarea
+                  name="content"
+                  id="content"
+                  required
+                  rows={14}
+                  value={formData.content}
+                  onChange={handleChange}
+                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all duration-200 hover:border-gray-300 bg-gray-50/50 backdrop-blur-sm resize-none"
+                  placeholder="Write your document content here..."
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-focus-within:opacity-10 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* AI Summary */}
+            <div className="group animate-fade-in-up animation-delay-500">
+              <div className="flex items-center justify-between mb-3">
+                <label htmlFor="summary" className="block text-sm font-semibold text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">
+                  Summary
+                </label>
                 <button
                   type="button"
-                  onClick={handleAddTag}
-                  className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                  onClick={generateSummary}
+                  disabled={aiLoading}
+                  className="group/ai inline-flex items-center px-4 py-2 border-2 border-indigo-200 text-sm font-medium rounded-xl text-indigo-700 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none"
                 >
-                  Add
+                  <Bot className="h-4 w-4 mr-2 group-hover/ai:animate-bounce" />
+                  {aiLoading ? (
+                    <>
+                      <span className="animate-pulse">Generating...</span>
+                      <div className="ml-2 flex space-x-1">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce animation-delay-100"></div>
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce animation-delay-200"></div>
+                      </div>
+                    </>
+                  ) : (
+                    'Generate with AI'
+                  )}
+                </button>
+              </div>
+              <div className="relative">
+                <textarea
+                  name="summary"
+                  id="summary"
+                  rows={4}
+                  value={formData.summary}
+                  onChange={handleChange}
+                  className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all duration-200 hover:border-gray-300 bg-gray-50/50 backdrop-blur-sm resize-none"
+                  placeholder="Document summary will appear here..."
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-focus-within:opacity-10 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div className="animate-fade-in-up animation-delay-600">
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-semibold text-gray-700">
+                  Tags
+                </label>
+                <button
+                  type="button"
+                  onClick={generateTags}
+                  disabled={aiLoading}
+                  className="group/ai inline-flex items-center px-4 py-2 border-2 border-purple-200 text-sm font-medium rounded-xl text-purple-700 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:hover:scale-100 disabled:hover:shadow-none"
+                >
+                  <Sparkles className="h-4 w-4 mr-2 group-hover/ai:animate-spin" />
+                  {aiLoading ? (
+                    <>
+                      <span className="animate-pulse">Generating...</span>
+                      <div className="ml-2 flex space-x-1">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce animation-delay-100"></div>
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce animation-delay-200"></div>
+                      </div>
+                    </>
+                  ) : (
+                    'Generate Tags'
+                  )}
                 </button>
               </div>
               
-              {formData.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="ml-1 text-indigo-600 hover:text-indigo-500"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  ))}
+              <div className="space-y-4">
+                <div className="flex space-x-3">
+                  <div className="flex-1 relative group">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all duration-200 hover:border-gray-300 bg-gray-50/50 backdrop-blur-sm group-focus-within:bg-white"
+                      placeholder="Add a tag and press Enter..."
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-focus-within:opacity-10 transition-opacity duration-200 pointer-events-none"></div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="px-6 py-3 border-2 border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
+                  >
+                    Add
+                  </button>
                 </div>
-              )}
+                
+                {formData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-3 p-4 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-gray-100">
+                    {formData.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="group/tag inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 border border-indigo-200 hover:from-indigo-200 hover:to-purple-200 transition-all duration-200 hover:scale-105 animate-fade-in"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="ml-2 text-indigo-600 hover:text-red-500 transition-colors duration-200 hover:bg-white rounded-full p-1 group-hover/tag:rotate-90"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={() => navigate('/dashboard')}
-              className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              {loading 
-                ? (isEditing ? 'Updating...' : 'Creating...') 
-                : (isEditing ? 'Update Document' : 'Create Document')
-              }
-            </button>
-          </div>
-        </form>
+            {/* Submit Buttons */}
+            <div className="flex justify-end space-x-4 pt-6 animate-fade-in-up animation-delay-700">
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard')}
+                className="px-6 py-3 border-2 border-gray-300 text-sm font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="group inline-flex items-center px-8 py-3 border-2 border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:hover:scale-100 disabled:hover:shadow-2xl relative overflow-hidden"
+              >
+                {/* Button shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                
+                <Save className={`h-4 w-4 mr-2 transition-transform duration-200 ${loading ? 'animate-spin' : 'group-hover:scale-110'}`} />
+                {loading 
+                  ? (
+                    <span className="flex items-center">
+                      {isEditing ? 'Updating...' : 'Creating...'}
+                      <div className="ml-2 flex space-x-1">
+                        <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-white rounded-full animate-bounce animation-delay-100"></div>
+                        <div className="w-2 h-2 bg-white rounded-full animate-bounce animation-delay-200"></div>
+                      </div>
+                    </span>
+                  ) 
+                  : (isEditing ? 'Update Document' : 'Create Document')
+                }
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 100% 0;
+          }
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+        }
+
+        .animate-shimmer {
+          background-size: 200% 100%;
+          animation: shimmer 2s ease-in-out infinite;
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out forwards;
+        }
+
+        .animation-delay-100 {
+          animation-delay: 0.1s;
+        }
+
+        .animation-delay-200 {
+          animation-delay: 0.2s;
+        }
+
+        .animation-delay-300 {
+          animation-delay: 0.3s;
+        }
+
+        .animation-delay-400 {
+          animation-delay: 0.4s;
+        }
+
+        .animation-delay-500 {
+          animation-delay: 0.5s;
+        }
+
+        .animation-delay-600 {
+          animation-delay: 0.6s;
+        }
+
+        .animation-delay-700 {
+          animation-delay: 0.7s;
+        }
+
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+
+        /* Custom scrollbar for textareas */
+        textarea::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 4px;
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+          border-radius: 4px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #4f46e5, #7c3aed);
+        }
+      `}</style>
     </div>
   );
 };

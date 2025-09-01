@@ -1,4 +1,4 @@
-// Enhanced Dashboard.js with attractive modern design
+// Enhanced Dashboard.js with attractive modern design - FIXED
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -39,10 +39,12 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // Extract all unique tags
+    // Extract all unique tags - with null check
     const tags = new Set();
     documents.forEach(doc => {
-      doc.tags.forEach(tag => tags.add(tag));
+      if (doc.tags && Array.isArray(doc.tags)) {
+        doc.tags.forEach(tag => tags.add(tag));
+      }
     });
     setAllTags([...tags]);
   }, [documents]);
@@ -63,7 +65,12 @@ const Dashboard = () => {
       const response = await axios.get('/documents/activity');
       setRecentActivity(response.data);
     } catch (error) {
-      console.error('Failed to fetch recent activity');
+      if (error.response?.status === 429) {
+        console.warn('Rate limit exceeded for recent activity - skipping for now');
+        setRecentActivity([]); // Set empty array to avoid issues
+      } else {
+        console.error('Failed to fetch recent activity:', error);
+      }
     }
   };
 
@@ -92,7 +99,7 @@ const Dashboard = () => {
 
   const filteredDocuments = selectedTags.length > 0
     ? documents.filter(doc => 
-        selectedTags.some(tag => doc.tags.includes(tag))
+        doc.tags && selectedTags.some(tag => doc.tags.includes(tag))
       )
     : documents;
 
@@ -177,10 +184,11 @@ const Dashboard = () => {
   };
 
   const canEdit = (doc) => {
-    return user.role === 'admin' || doc.createdBy._id === user.id;
+    return user && user.role === 'admin' || (doc.createdBy && doc.createdBy._id === user.id);
   };
 
-  const userDocuments = documents.filter(doc => doc.createdBy._id === user.id);
+  // Fixed: Add null check for createdBy
+  const userDocuments = documents.filter(doc => doc.createdBy && doc.createdBy._id === user.id);
 
   if (loading) {
     return (
@@ -232,7 +240,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">
-                  Welcome Back, {user.name}!
+                  Welcome Back, {user && user.name ? user.name : 'User'}!
                 </h1>
                 <p className="text-indigo-200 text-lg">Your knowledge hub at a glance. Let's make today productive.</p>
               </div>
@@ -433,7 +441,7 @@ const Dashboard = () => {
                             </div>
                           )}
                           
-                          {doc.tags.length > 0 && (
+                          {doc.tags && doc.tags.length > 0 && (
                             <div className="mt-6 flex flex-wrap gap-2">
                               {doc.tags.slice(0, 3).map(tag => (
                                 <span
@@ -459,7 +467,9 @@ const Dashboard = () => {
                           <div className="h-8 w-8 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mr-3 group-hover/author:scale-110 transition-transform duration-300">
                             <User className="h-4 w-4 text-white" />
                           </div>
-                          <span className="font-semibold">{doc.createdBy.name}</span>
+                          <span className="font-semibold">
+                            {doc.createdBy && doc.createdBy.name ? doc.createdBy.name : 'Unknown User'}
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-2 text-indigo-500" />
@@ -618,7 +628,7 @@ const Dashboard = () => {
                           {doc.title}
                         </Link>
                         <p className="text-xs text-gray-600 mt-1 font-medium">
-                          Updated by {doc.createdBy.name}
+                          Updated by {doc.createdBy && doc.createdBy.name ? doc.createdBy.name : 'Unknown User'}
                         </p>
                         <p className="text-xs text-gray-500 mt-2 flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
